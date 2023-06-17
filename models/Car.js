@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 const carSchema = new mongoose.Schema(
   {
-    Make: {
+    make: {
       type: String,
       required: true,
     },
-    Model: {
+    model: {
       type: String,
       required: true,
     },
-    Year: {
+    year: {
       type: Number,
       min: 1900,
       required: true,
     },
-    "Transmission Type": {
+    transmission_type: {
       type: String,
       enum: [
         "MANUAL",
@@ -25,16 +25,16 @@ const carSchema = new mongoose.Schema(
       ],
       required: true,
     },
-    "Vehicle Size": {
+    size: {
       type: String,
       enum: ["Compact", "Midsize", "Large"],
       required: true,
     },
-    "Vehicle Style": {
+    style: {
       type: String,
       required: true,
     },
-    MSRP: {
+    price: {
       type: Number,
       required: true,
     },

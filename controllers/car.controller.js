@@ -10,13 +10,13 @@ carController.createCar = async (req, res, next) => {
 
     // Validate required fields
     const requiredFields = {
-      Make: "Make is empty",
-      Model: "Model is empty",
-      Year: "Year is empty",
-      "Transmission Type": "Transmission Type is empty",
-      "Vehicle Size": "Vehicle Size is empty",
-      "Vehicle Style": "Vehicle Style is empty",
-      MSRP: "MSRP is empty",
+      make: "Make is empty",
+      model: "Model is empty",
+      year: "Year is empty",
+      transmission_type: "Transmission Type is empty",
+      size: "Vehicle Size is empty",
+      style: "Vehicle Style is empty",
+      price: "Price is empty",
     };
 
     const missingFields = [];
@@ -47,11 +47,41 @@ carController.getCars = async (req, res, next) => {
 
   // const filter = {_id: ObjectId("648d0ea432e8813d5fe51775")};
   const filter = {};
+  const projection = {
+    "Engine Fuel Type": 0,
+    "Engine HP": 0,
+    "Engine Cylinders": 0,
+    Driven_Wheels: 0,
+    "Number of Doors": 0,
+    "Market Category": 0,
+    "highway MPG": 0,
+    "city mpg": 0,
+    Popularity: 0,
+  };
+
   try {
     //mongoose query
     // await Car.updateMany({}, { $set: { isDeleted: false } });
-    const listOfFound = await Car.find(filter).skip(offset).limit(limit);
+    // await Car.updateMany({}, {
+    //   $rename: {
+    //     "Make": "make",
+    //     "Model": "model",
+    //     "Year": "release_date",
+    //     "Transmission Type": "transmission_type",
+    //     "Vehicle Size": "size",
+    //     "Vehicle Style": "style",
+    //     "MSRP": "price"
+    //   }
+    // });
+
+    // console.log('Field names updated successfully.');
+
+    const listOfFound = await Car.find(filter, projection)
+      .skip(offset)
+      .limit(limit);
     const totalCar = await Car.countDocuments(filter);
+
+    console.log("Field names updated successfully.");
 
     sendResponse(
       res,
@@ -76,13 +106,13 @@ carController.editCar = async (req, res, next) => {
 
     // Validate required fields
     const requiredFields = {
-      Make: "Make is empty",
-      Model: "Model is empty",
-      Year: "Year is empty",
-      "Transmission Type": "Transmission Type is empty",
-      "Vehicle Size": "Vehicle Size is empty",
-      "Vehicle Style": "Vehicle Style is empty",
-      MSRP: "MSRP is empty",
+      make: "Make is empty",
+      model: "Model is empty",
+      year: "Year is empty",
+      transmission_type: "Transmission Type is empty",
+      size: "Vehicle Size is empty",
+      style: "Vehicle Style is empty",
+      price: "Price is empty",
     };
 
     const missingFields = [];
@@ -138,7 +168,14 @@ carController.deleteCar = async (req, res, next) => {
       throw new AppError(404, "Not Found", "Car not found");
     }
 
-    sendResponse(res, 200, true, softDeleteCar, null, "Soft delete car success");
+    sendResponse(
+      res,
+      200,
+      true,
+      softDeleteCar,
+      null,
+      "Soft delete car success"
+    );
   } catch (err) {
     next(err);
   }
