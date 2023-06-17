@@ -70,14 +70,11 @@ carController.getCars = async (req, res, next) => {
 
 carController.editCar = async (req, res, next) => {
   //in real project you will getting id from req. For updating and deleting, it is recommended for you to use unique identifier such as _id to avoid duplication
-  //you will also get updateCar from req
-  // empty target and info mean update nothing
-  const targetId = null;
-  const updateCar = "";
-
-  //options allow you to modify query. e.g new true return lastest update of data
-  const options = { new: true };
   try {
+    const targetId = req.params.id;
+    const updateCar = req.body;
+    //options allow you to modify query. e.g new true return lastest update of data
+    const options = { new: true };
     //mongoose query
     const updated = await Car.findByIdAndUpdate(targetId, updateCar, options);
 
@@ -91,7 +88,7 @@ carController.deleteCar = async (req, res, next) => {
   //in real project you will getting id from req. For updating and deleting, it is recommended for you to use unique identifier such as _id to avoid duplication
 
   // empty target mean delete nothing
-  const targetId = null;
+  const targetId = req.params.id;
   //options allow you to modify query. e.g new true return lastest update of data
   const options = { new: true };
   try {
