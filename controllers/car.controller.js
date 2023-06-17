@@ -4,20 +4,35 @@ const Car = require("../models/Car");
 const carController = {};
 
 carController.createCar = async (req, res, next) => {
-  const carData = req.body;
-
   try {
     // Validate input
+    const carData = req.body;
+
+    // Validate required fields
+    const requiredFields = {
+      Make: "Make is empty",
+      Model: "Model is empty",
+      Year: "Year is empty",
+      "Transmission Type": "Transmission Type is empty",
+      "Vehicle Size": "Vehicle Size is empty",
+      "Vehicle Style": "Vehicle Style is empty",
+      MSRP: "MSRP is empty",
+    };
+
+    const missingFields = [];
+    for (const [field, errorMessage] of Object.entries(requiredFields)) {
+      if (!carData[field]) {
+        missingFields.push(errorMessage);
+      }
+    }
+
+    if (missingFields.length > 0) {
+      throw new AppError(400, "Bad Request", missingFields.join(", "));
+    }
+
     if (!carData) throw new AppError(402, "Bad Request", "Create Car Error");
     const createdCar = await Car.create(carData);
-    sendResponse(
-      res,
-      200,
-      true,
-      { data: createdCar },
-      null,
-      "Create Car Success"
-    );
+    sendResponse(res, 200, true, createdCar, null, "Create Car Success");
   } catch (err) {
     next(err);
   }
@@ -66,7 +81,7 @@ carController.editCar = async (req, res, next) => {
     //mongoose query
     const updated = await Car.findByIdAndUpdate(targetId, updateCar, options);
 
-    sendResponse(res, 200, true, { data: updated }, null, "Update car success");
+    sendResponse(res, 200, true, updated, null, "Update car success");
   } catch (err) {
     next(err);
   }
@@ -83,7 +98,7 @@ carController.deleteCar = async (req, res, next) => {
     //mongoose query
     const updated = await Car.findByIdAndDelete(targetId, options);
 
-    sendResponse(res, 200, true, { data: updated }, null, "Delete car success");
+    sendResponse(res, 200, true, updated, null, "Delete car success");
   } catch (err) {
     next(err);
   }
