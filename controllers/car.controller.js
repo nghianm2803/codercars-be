@@ -26,7 +26,7 @@ carController.getCars = async (req, res, next) => {
   const filter = {};
   try {
     //mongoose query
-    // await collection.updateMany({}, { $set: { isDeleted: false } });
+    await Car.updateMany({}, { $set: { isDeleted: false } });
     const listOfFound = await Car.find(filter).limit(5);
     const totalCar = await Car.countDocuments(filter);
 
