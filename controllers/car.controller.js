@@ -73,6 +73,29 @@ carController.editCar = async (req, res, next) => {
   try {
     const targetId = req.params.id;
     const updateCar = req.body;
+
+    // Validate required fields
+    const requiredFields = {
+      Make: "Make is empty",
+      Model: "Model is empty",
+      Year: "Year is empty",
+      "Transmission Type": "Transmission Type is empty",
+      "Vehicle Size": "Vehicle Size is empty",
+      "Vehicle Style": "Vehicle Style is empty",
+      MSRP: "MSRP is empty",
+    };
+
+    const missingFields = [];
+    for (const [field, errorMessage] of Object.entries(requiredFields)) {
+      if (!updateCar[field]) {
+        missingFields.push(errorMessage);
+      }
+    }
+
+    if (missingFields.length > 0) {
+      throw new AppError(400, "Bad Request", missingFields.join(", "));
+    }
+
     //options allow you to modify query. e.g new true return lastest update of data
     const options = { new: true };
     //mongoose query
@@ -84,18 +107,38 @@ carController.editCar = async (req, res, next) => {
   }
 };
 
+// carController.deleteCar = async (req, res, next) => {
+//   //in real project you will getting id from req. For updating and deleting, it is recommended for you to use unique identifier such as _id to avoid duplication
+
+//   // empty target mean delete nothing
+//   const targetId = req.params.id;
+//   //options allow you to modify query. e.g new true return lastest update of data
+//   const options = { new: true };
+//   try {
+//     //mongoose query
+//     const updated = await Car.findByIdAndDelete(targetId, options);
+
+//     sendResponse(res, 200, true, updated, null, "Delete car success");
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
 carController.deleteCar = async (req, res, next) => {
-  //in real project you will getting id from req. For updating and deleting, it is recommended for you to use unique identifier such as _id to avoid duplication
-
-  // empty target mean delete nothing
-  const targetId = req.params.id;
-  //options allow you to modify query. e.g new true return lastest update of data
-  const options = { new: true };
   try {
-    //mongoose query
-    const updated = await Car.findByIdAndDelete(targetId, options);
+    const targetId = req.params.id;
 
-    sendResponse(res, 200, true, updated, null, "Delete car success");
+    const softDeleteCar = await Car.findByIdAndUpdate(
+      targetId,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!softDeleteCar) {
+      throw new AppError(404, "Not Found", "Car not found");
+    }
+
+    sendResponse(res, 200, true, softDeleteCar, null, "Soft delete car success");
   } catch (err) {
     next(err);
   }
