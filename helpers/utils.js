@@ -8,7 +8,7 @@ utilsHelper.sendResponse = (
   errors,
   message,
   totalCar,
-  page
+  totalPages
 ) => {
   const response = {};
   if (success) response.success = success;
@@ -16,7 +16,7 @@ utilsHelper.sendResponse = (
   if (cars) response.cars = cars;
   if (totalCar) response.totalCar = totalCar;
   if (errors) response.errors = errors;
-  if (page) response.page = page;
+  if (totalPages) response.totalPages = totalPages;
   return res.status(status).json(response);
 };
 

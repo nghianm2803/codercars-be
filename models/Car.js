@@ -9,7 +9,7 @@ const carSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    year: {
+    release_date: {
       type: Number,
       min: 1900,
       required: true,

@@ -12,7 +12,7 @@ carController.createCar = async (req, res, next) => {
     const requiredFields = {
       make: "Make is empty",
       model: "Model is empty",
-      year: "Year is empty",
+      release_date: "Release Date is empty",
       transmission_type: "Transmission Type is empty",
       size: "Vehicle Size is empty",
       style: "Vehicle Style is empty",
@@ -81,7 +81,7 @@ carController.getCars = async (req, res, next) => {
       .limit(limit);
     const totalCar = await Car.countDocuments(filter);
 
-    console.log("Field names updated successfully.");
+    const totalPages = Math.ceil(totalCar / limit);
 
     sendResponse(
       res,
@@ -91,7 +91,7 @@ carController.getCars = async (req, res, next) => {
       null,
       "Get Car List Successfully!",
       totalCar,
-      page
+      totalPages
     );
   } catch (err) {
     next(err);
@@ -108,7 +108,7 @@ carController.editCar = async (req, res, next) => {
     const requiredFields = {
       make: "Make is empty",
       model: "Model is empty",
-      year: "Year is empty",
+      release_date: "Release Date is empty",
       transmission_type: "Transmission Type is empty",
       size: "Vehicle Size is empty",
       style: "Vehicle Style is empty",
