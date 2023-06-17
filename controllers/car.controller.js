@@ -4,17 +4,20 @@ const Car = require("../models/Car");
 const carController = {};
 
 carController.createCar = async (req, res, next) => {
-  const car = {
-    data: "car",
-    flag: false,
-  };
+  const carData = req.body;
 
   try {
-    //always remember to control your inputs
-    if (!car) throw new AppError(402, "Bad Request", "Create Car Error");
-    //mongoose query
-    const created = await Car.create(car);
-    sendResponse(res, 200, true, { data: created }, null, "Create Car Success");
+    // Validate input
+    if (!carData) throw new AppError(402, "Bad Request", "Create Car Error");
+    const createdCar = await Car.create(carData);
+    sendResponse(
+      res,
+      200,
+      true,
+      { data: createdCar },
+      null,
+      "Create Car Success"
+    );
   } catch (err) {
     next(err);
   }
@@ -22,12 +25,17 @@ carController.createCar = async (req, res, next) => {
 
 carController.getCars = async (req, res, next) => {
   //in real project you will getting condition from from req then construct the filter object for query
-  // empty filter mean get all
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+
+  const offset = (page - 1) * limit;
+
+  // const filter = {_id: ObjectId("648d0ea432e8813d5fe51775")};
   const filter = {};
   try {
     //mongoose query
-    await Car.updateMany({}, { $set: { isDeleted: false } });
-    const listOfFound = await Car.find(filter).limit(5);
+    // await Car.updateMany({}, { $set: { isDeleted: false } });
+    const listOfFound = await Car.find(filter).skip(offset).limit(limit);
     const totalCar = await Car.countDocuments(filter);
 
     sendResponse(
@@ -37,7 +45,8 @@ carController.getCars = async (req, res, next) => {
       listOfFound,
       null,
       "Get Car List Successfully!",
-      totalCar
+      totalCar,
+      page
     );
   } catch (err) {
     next(err);
