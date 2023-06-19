@@ -18,9 +18,10 @@ app.use(express.static(path.join(__dirname, "public")));
 const { sendResponse, AppError } = require("./helpers/utils.js");
 
 // Connect to MONGODB
-mongoose.connect(process.env.MONGO_URI, () => {
-  console.log(`Connected to Database! ${process.env.MONGO_URI}`);
-});
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log(`Connected to Database! ${process.env.MONGO_URI}`))
+  .catch((err) => console.log(err, "Error"));
 
 app.use("/", indexRouter);
 
